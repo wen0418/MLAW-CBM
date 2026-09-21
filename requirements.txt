@@ -1,0 +1,64 @@
+# 核心科學計算與數據處理
+numpy
+scipy
+pandas
+sympy
+
+# 機器學習與深度學習核心 (會自動匹配相容 Python 3.12 的 Torch 2.2+)
+torch
+torchvision
+torchaudio
+scikit-learn
+tensorboard
+
+# 電腦視覺與影像處理
+opencv-python
+pillow
+scikit-image
+imageio
+imgaug
+
+# 自然語言處理與 Transformer 模型
+transformers
+huggingface-hub
+tokenizers
+sentence-transformers
+gensim
+nltk
+textblob
+
+# 視覺與特定模型套件 (原清單中包含的特製套件)
+timm
+einops
+grad-cam
+medclip
+adamp
+ttach
+ptflops
+
+# 視覺化
+matplotlib
+seaborn
+plotly
+cycler
+
+# 工具、網路與其他依賴
+absl-py
+blessed
+cachetools
+click
+cmake
+filelock
+fsspec
+joblib
+networkx
+protobuf
+psutil
+pyyaml
+requests
+safetensors
+tqdm
+wandb
+
+# 注意：原清單中的 clip 套件建議直接從 GitHub 安裝，PyPI 上的 clip 可能是其他無關專案
+git+https://github.com/openai/CLIP.git

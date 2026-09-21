@@ -1,0 +1,421 @@
+{
+  "dataset": "ISIC2018_Task3_Training",
+  "protocol": "baseline_cv10_imagelevel_shared_val_test_diagnostic",
+  "source_size": 10015,
+  "source_ground_truth": "dataset/ISIC2018/ISIC2018_Task3_Training_GroundTruth/ISIC2018_Task3_Training_GroundTruth.csv",
+  "source_ground_truth_sha256": "6cc39a6c579a5bd90639705c6a1ad4a326cb3df0626682be1cc693ec30a20ff6",
+  "official_lesion_grouping": "dataset/ISIC2018/ISIC2018_Task3_Training_LesionGroupings.csv",
+  "official_lesion_grouping_url": "https://isic-archive.s3.amazonaws.com/challenges/2018/ISIC2018_Task3_Training_LesionGroupings.csv",
+  "official_lesion_grouping_sha256": "b0352393dc54843e39a7c108781c54cc8a0ef282240330ac239a88c46ea0cc0f",
+  "unique_lesions": 7470,
+  "assignments_manifest": "splits/isic2018_baseline_cv10_imagelevel/assignments.csv",
+  "assignments_manifest_sha256": "fc80b1c6dd2507bea488ece054e3b183bc2923d134e790b1da393ba168826511",
+  "split_generator": {
+    "class": "sklearn.model_selection.StratifiedKFold",
+    "parameters": {
+      "n_splits": 10,
+      "shuffle": true,
+      "random_state": 60
+    },
+    "rng": "NumPy legacy RandomState / MT19937 via sklearn check_random_state",
+    "input_order": "official Task 3 Training ground-truth CSV row order",
+    "fold_ids": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ]
+  },
+  "versions": {
+    "python": "3.12.13",
+    "numpy": "2.4.4",
+    "sklearn": "1.8.0",
+    "pandas": "3.0.2"
+  },
+  "global_class_counts": {
+    "MEL": 1113,
+    "NV": 6705,
+    "BCC": 514,
+    "AKIEC": 327,
+    "BKL": 1099,
+    "DF": 115,
+    "VASC": 142
+  },
+  "folds": [
+    {
+      "fold": 0,
+      "manifest": "splits/isic2018_baseline_cv10_imagelevel/fold_00.csv",
+      "manifest_sha256": "00ec01f6f28b57e00a9db02df9477bb288635f5fef289089e73ffd6c635afe9d",
+      "train_size": 9013,
+      "holdout_size": 1002,
+      "val_size": 1002,
+      "test_size": 1002,
+      "val_test_overlap": 1002,
+      "train_class_counts": {
+        "MEL": 1002,
+        "NV": 6034,
+        "BCC": 462,
+        "AKIEC": 295,
+        "BKL": 989,
+        "DF": 103,
+        "VASC": 128
+      },
+      "holdout_class_counts": {
+        "MEL": 111,
+        "NV": 671,
+        "BCC": 52,
+        "AKIEC": 32,
+        "BKL": 110,
+        "DF": 12,
+        "VASC": 14
+      },
+      "holdout_lesion_seen_in_train_count": 415,
+      "holdout_lesion_seen_in_train_ratio": 0.41417165668662675
+    },
+    {
+      "fold": 1,
+      "manifest": "splits/isic2018_baseline_cv10_imagelevel/fold_01.csv",
+      "manifest_sha256": "72cbf3a142fab7c6cb2ab8b1dd4911437b91da9def47d0c1954692832ddeb639",
+      "train_size": 9013,
+      "holdout_size": 1002,
+      "val_size": 1002,
+      "test_size": 1002,
+      "val_test_overlap": 1002,
+      "train_class_counts": {
+        "MEL": 1002,
+        "NV": 6034,
+        "BCC": 462,
+        "AKIEC": 295,
+        "BKL": 989,
+        "DF": 103,
+        "VASC": 128
+      },
+      "holdout_class_counts": {
+        "MEL": 111,
+        "NV": 671,
+        "BCC": 52,
+        "AKIEC": 32,
+        "BKL": 110,
+        "DF": 12,
+        "VASC": 14
+      },
+      "holdout_lesion_seen_in_train_count": 417,
+      "holdout_lesion_seen_in_train_ratio": 0.4161676646706587
+    },
+    {
+      "fold": 2,
+      "manifest": "splits/isic2018_baseline_cv10_imagelevel/fold_02.csv",
+      "manifest_sha256": "998ebaca0887bbb2b750f1388c6d2f0b15bd50da4ba3256579225aea7ea81d32",
+      "train_size": 9013,
+      "holdout_size": 1002,
+      "val_size": 1002,
+      "test_size": 1002,
+      "val_test_overlap": 1002,
+      "train_class_counts": {
+        "MEL": 1002,
+        "NV": 6034,
+        "BCC": 462,
+        "AKIEC": 294,
+        "BKL": 989,
+        "DF": 104,
+        "VASC": 128
+      },
+      "holdout_class_counts": {
+        "MEL": 111,
+        "NV": 671,
+        "BCC": 52,
+        "AKIEC": 33,
+        "BKL": 110,
+        "DF": 11,
+        "VASC": 14
+      },
+      "holdout_lesion_seen_in_train_count": 417,
+      "holdout_lesion_seen_in_train_ratio": 0.4161676646706587
+    },
+    {
+      "fold": 3,
+      "manifest": "splits/isic2018_baseline_cv10_imagelevel/fold_03.csv",
+      "manifest_sha256": "4360d8ce94c806b4e9b42a95d9c4dee002f602c477190c911935e12d6dc3afcd",
+      "train_size": 9013,
+      "holdout_size": 1002,
+      "val_size": 1002,
+      "test_size": 1002,
+      "val_test_overlap": 1002,
+      "train_class_counts": {
+        "MEL": 1002,
+        "NV": 6034,
+        "BCC": 463,
+        "AKIEC": 294,
+        "BKL": 989,
+        "DF": 104,
+        "VASC": 127
+      },
+      "holdout_class_counts": {
+        "MEL": 111,
+        "NV": 671,
+        "BCC": 51,
+        "AKIEC": 33,
+        "BKL": 110,
+        "DF": 11,
+        "VASC": 15
+      },
+      "holdout_lesion_seen_in_train_count": 418,
+      "holdout_lesion_seen_in_train_ratio": 0.4171656686626746
+    },
+    {
+      "fold": 4,
+      "manifest": "splits/isic2018_baseline_cv10_imagelevel/fold_04.csv",
+      "manifest_sha256": "81450920cc30a65e75aa0c8232c0e64bdcb748b50f4c6ea7f702f8e2f45380c7",
+      "train_size": 9013,
+      "holdout_size": 1002,
+      "val_size": 1002,
+      "test_size": 1002,
+      "val_test_overlap": 1002,
+      "train_class_counts": {
+        "MEL": 1002,
+        "NV": 6034,
+        "BCC": 463,
+        "AKIEC": 294,
+        "BKL": 989,
+        "DF": 104,
+        "VASC": 127
+      },
+      "holdout_class_counts": {
+        "MEL": 111,
+        "NV": 671,
+        "BCC": 51,
+        "AKIEC": 33,
+        "BKL": 110,
+        "DF": 11,
+        "VASC": 15
+      },
+      "holdout_lesion_seen_in_train_count": 445,
+      "holdout_lesion_seen_in_train_ratio": 0.4441117764471058
+    },
+    {
+      "fold": 5,
+      "manifest": "splits/isic2018_baseline_cv10_imagelevel/fold_05.csv",
+      "manifest_sha256": "b0b1937c06a3a3a260087b356b2991b87b961e187bf70110d46e7163d49d7c6f",
+      "train_size": 9014,
+      "holdout_size": 1001,
+      "val_size": 1001,
+      "test_size": 1001,
+      "val_test_overlap": 1001,
+      "train_class_counts": {
+        "MEL": 1001,
+        "NV": 6035,
+        "BCC": 463,
+        "AKIEC": 294,
+        "BKL": 989,
+        "DF": 104,
+        "VASC": 128
+      },
+      "holdout_class_counts": {
+        "MEL": 112,
+        "NV": 670,
+        "BCC": 51,
+        "AKIEC": 33,
+        "BKL": 110,
+        "DF": 11,
+        "VASC": 14
+      },
+      "holdout_lesion_seen_in_train_count": 421,
+      "holdout_lesion_seen_in_train_ratio": 0.4205794205794206
+    },
+    {
+      "fold": 6,
+      "manifest": "splits/isic2018_baseline_cv10_imagelevel/fold_06.csv",
+      "manifest_sha256": "28e4f426a072304911a30d825b15a7fbca28dc276e5934d0156127811c8b71cb",
+      "train_size": 9014,
+      "holdout_size": 1001,
+      "val_size": 1001,
+      "test_size": 1001,
+      "val_test_overlap": 1001,
+      "train_class_counts": {
+        "MEL": 1001,
+        "NV": 6035,
+        "BCC": 463,
+        "AKIEC": 294,
+        "BKL": 989,
+        "DF": 104,
+        "VASC": 128
+      },
+      "holdout_class_counts": {
+        "MEL": 112,
+        "NV": 670,
+        "BCC": 51,
+        "AKIEC": 33,
+        "BKL": 110,
+        "DF": 11,
+        "VASC": 14
+      },
+      "holdout_lesion_seen_in_train_count": 418,
+      "holdout_lesion_seen_in_train_ratio": 0.4175824175824176
+    },
+    {
+      "fold": 7,
+      "manifest": "splits/isic2018_baseline_cv10_imagelevel/fold_07.csv",
+      "manifest_sha256": "b5b337e507bb9ae15ff4933984bf314a01bbbf5613d67569dcd6f20b4ad3da42",
+      "train_size": 9014,
+      "holdout_size": 1001,
+      "val_size": 1001,
+      "test_size": 1001,
+      "val_test_overlap": 1001,
+      "train_class_counts": {
+        "MEL": 1001,
+        "NV": 6035,
+        "BCC": 463,
+        "AKIEC": 294,
+        "BKL": 990,
+        "DF": 103,
+        "VASC": 128
+      },
+      "holdout_class_counts": {
+        "MEL": 112,
+        "NV": 670,
+        "BCC": 51,
+        "AKIEC": 33,
+        "BKL": 109,
+        "DF": 12,
+        "VASC": 14
+      },
+      "holdout_lesion_seen_in_train_count": 444,
+      "holdout_lesion_seen_in_train_ratio": 0.4435564435564436
+    },
+    {
+      "fold": 8,
+      "manifest": "splits/isic2018_baseline_cv10_imagelevel/fold_08.csv",
+      "manifest_sha256": "15698297bada8d8d8638a52bbb6fd25fdb8d42475e48aaa122592805bae87b76",
+      "train_size": 9014,
+      "holdout_size": 1001,
+      "val_size": 1001,
+      "test_size": 1001,
+      "val_test_overlap": 1001,
+      "train_class_counts": {
+        "MEL": 1002,
+        "NV": 6035,
+        "BCC": 463,
+        "AKIEC": 294,
+        "BKL": 989,
+        "DF": 103,
+        "VASC": 128
+      },
+      "holdout_class_counts": {
+        "MEL": 111,
+        "NV": 670,
+        "BCC": 51,
+        "AKIEC": 33,
+        "BKL": 110,
+        "DF": 12,
+        "VASC": 14
+      },
+      "holdout_lesion_seen_in_train_count": 405,
+      "holdout_lesion_seen_in_train_ratio": 0.4045954045954046
+    },
+    {
+      "fold": 9,
+      "manifest": "splits/isic2018_baseline_cv10_imagelevel/fold_09.csv",
+      "manifest_sha256": "349ec4af9200e9892ed0805490d632fd7be267c655c25ab94738cc01252c2823",
+      "train_size": 9014,
+      "holdout_size": 1001,
+      "val_size": 1001,
+      "test_size": 1001,
+      "val_test_overlap": 1001,
+      "train_class_counts": {
+        "MEL": 1002,
+        "NV": 6035,
+        "BCC": 462,
+        "AKIEC": 295,
+        "BKL": 989,
+        "DF": 103,
+        "VASC": 128
+      },
+      "holdout_class_counts": {
+        "MEL": 111,
+        "NV": 670,
+        "BCC": 52,
+        "AKIEC": 32,
+        "BKL": 110,
+        "DF": 12,
+        "VASC": 14
+      },
+      "holdout_lesion_seen_in_train_count": 417,
+      "holdout_lesion_seen_in_train_ratio": 0.4165834165834166
+    }
+  ],
+  "validation": {
+    "expected_images": 10015,
+    "jpeg_count": 10015,
+    "holdout_size_sum": 10015,
+    "holdout_union_size": 10015,
+    "max_pairwise_holdout_intersection": 0,
+    "each_image_holdout_exactly_once": true,
+    "per_class_holdout_count_max_minus_min": {
+      "MEL": 1,
+      "NV": 1,
+      "BCC": 1,
+      "AKIEC": 1,
+      "BKL": 1,
+      "DF": 1,
+      "VASC": 1
+    }
+  },
+  "pairwise_holdout_intersections": {
+    "00_01": 0,
+    "00_02": 0,
+    "00_03": 0,
+    "00_04": 0,
+    "00_05": 0,
+    "00_06": 0,
+    "00_07": 0,
+    "00_08": 0,
+    "00_09": 0,
+    "01_02": 0,
+    "01_03": 0,
+    "01_04": 0,
+    "01_05": 0,
+    "01_06": 0,
+    "01_07": 0,
+    "01_08": 0,
+    "01_09": 0,
+    "02_03": 0,
+    "02_04": 0,
+    "02_05": 0,
+    "02_06": 0,
+    "02_07": 0,
+    "02_08": 0,
+    "02_09": 0,
+    "03_04": 0,
+    "03_05": 0,
+    "03_06": 0,
+    "03_07": 0,
+    "03_08": 0,
+    "03_09": 0,
+    "04_05": 0,
+    "04_06": 0,
+    "04_07": 0,
+    "04_08": 0,
+    "04_09": 0,
+    "05_06": 0,
+    "05_07": 0,
+    "05_08": 0,
+    "05_09": 0,
+    "06_07": 0,
+    "06_08": 0,
+    "06_09": 0,
+    "07_08": 0,
+    "07_09": 0,
+    "08_09": 0
+  },
+  "interpretation_limits": [
+    "Validation and test are the same holdout; checkpoint-selected scores are optimistic.",
+    "This is an image-level split and can place images of one lesion in train and holdout.",
+    "This diagnostic is not a leakage-free final evaluation or the paper 8:1:1/five-fold protocol."
+  ]
+}

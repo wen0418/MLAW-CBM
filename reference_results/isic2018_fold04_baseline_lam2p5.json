@@ -1,0 +1,12 @@
+{
+  "description": "Archived same-fold reference used only for configuration validation and delta reporting; no checkpoint is included.",
+  "protocol": "baseline_cv10_imagelevel_shared_val_test_diagnostic",
+  "fold": 4,
+  "acc": 92.01596806387225,
+  "bmac": 87.30311007070893,
+  "macro_f1": 87.02689245077435,
+  "weighted_f1": 91.95152175698935,
+  "best_epoch": 62,
+  "model_source_sha256": "29e0d80dd12830cd40d89f64cb9995b3bf5f26196577b44c8fcec9d4200cdc55",
+  "manifest_sha256": "81450920cc30a65e75aa0c8232c0e64bdcb748b50f4c6ea7f702f8e2f45380c7"
+}

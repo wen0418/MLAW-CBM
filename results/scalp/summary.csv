@@ -1,0 +1,6 @@
+model,public_role,historical_id,protocol,acc,bmac,macro_f1,weighted_f1,best_epoch,notes
+Attribute-Wavelet,method_evolution,V3,shared_val_test_diagnostic,86.210762,86.697912,80.970207,86.783572,21,Historical controlled run
+Counterfactual Attribute-Wavelet,method_evolution,newV5,shared_val_test_diagnostic,86.771300,87.932003,81.534243,87.471576,11,Historical controlled run
+Detached Attribute-guided pooling,legacy_ablation,V5-2,shared_val_test_diagnostic,86.575112,88.562140,81.605081,87.544145,9,Archived legacy result; model removed from public core
+MLAW-CBM,main,V5-4,not_yet_rerun,,,,,,Stable configurable entry point added; controlled scalp run pending
+MLAW-CBM-Energy,ablation,V5-7,not_yet_rerun,,,,,,Stable configurable entry point added; controlled scalp run pending

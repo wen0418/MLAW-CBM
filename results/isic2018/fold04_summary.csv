@@ -1,0 +1,6 @@
+model,public_role,historical_id,protocol,acc,bmac,macro_f1,weighted_f1,best_epoch,bmac_delta_vs_baseline,notes
+MVP-CBM,baseline,baseline,shared_val_test_diagnostic,92.015968,87.303110,87.026892,91.951522,62,0.000000,Archived reference; no checkpoint included
+Attribute-Wavelet,method_evolution,V3,shared_val_test_diagnostic,92.814371,89.778394,89.113587,92.849423,62,2.475284,Wavelet-guided CLS stage
+Counterfactual Attribute-Wavelet,method_evolution,newV5,shared_val_test_diagnostic,92.115768,89.611126,88.889538,92.135707,41,2.308016,Counterfactual band-selected wavelet residual
+MLAW-CBM,main,V5-4,shared_val_test_diagnostic,92.614770,90.309785,90.126222,92.478174,47,3.006675,Pre-LayerNorm wavelet-enhanced patch AP
+MLAW-CBM-Energy,ablation,V5-7,shared_val_test_diagnostic,92.215569,90.040517,89.966456,92.290351,71,2.737407,Clean AP(X) plus separately projected RMS wavelet energy

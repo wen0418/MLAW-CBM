@@ -1,0 +1,104 @@
+# ==========================================
+# 1. 專案自訂資料夾 (Custom Folders)
+# ==========================================
+dataset/
+log/
+logs/
+run_logs/
+selected_case/
+selected_cases/
+wavelet_outputs/
+output/
+fig/
+checkpoint/
+
+# ==========================================
+# 2. 大型模型權重檔與實驗紀錄 (ML Checkpoints & Logs)
+# ==========================================
+*.pt
+*.pth
+*.onnx
+*.bin
+*.h5
+*.ckpt
+*.safetensors
+runs/
+wandb/
+tensorboard/
+*.log
+
+# ==========================================
+# 3. Python 快取與編譯檔 (Python Cache & Build)
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==========================================
+# 4. 虛擬環境 (Virtual Environments)
+# ==========================================
+venv/
+.venv/
+env/
+.env/
+env.bak/
+venv.bak/
+
+# ==========================================
+# 5. 開發工具與編輯器設定 (IDE & Editors)
+# ==========================================
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# PyCharm / JetBrains
+.idea/
+
+# Jupyter Notebook 快取
+.ipynb_checkpoints/
+
+# ==========================================
+# 6. 作業系統暫存檔 (OS Generated Files)
+# ==========================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# ==========================================
+# 7. 金鑰與環境變數 (Secrets & Environment)
+# ==========================================
+.env
+.env.local
+*.pem
+*.key
