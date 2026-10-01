@@ -7,5 +7,12 @@ available from their own modules.
 
 from .mlaw_cbm import MLAWCBM, mvpcbm
 from .mlaw_cbm_energy import MLAWCBMEnergy
+from .mlaw_cbm_res import MLAWCBM_res, MLAWCBMRes
 
-__all__ = ["MLAWCBM", "MLAWCBMEnergy", "mvpcbm"]
+__all__ = [
+    "MLAWCBM",
+    "MLAWCBM_res",
+    "MLAWCBMRes",
+    "MLAWCBMEnergy",
+    "mvpcbm",
+]
