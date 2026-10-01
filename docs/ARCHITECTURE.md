@@ -20,12 +20,24 @@ The intended story is:
 
 ## Main model: MLAW-CBM (historical V5-4)
 
-At layer `l`, let `X_l` be the 196 ViT patch tokens. A fixed one-level Haar
-transform constructs the LH, HL, and HH detail components. For each Attribute,
-the model measures the change caused by removing one detail band. Sparsemax
+At layer `l`, let `X_l` be the ViT patch tokens. A fixed one-level Haar
+transform constructs a vectorized bank of isolated LH, HL, and HH residuals:
+
+```text
+R_l = [IDWT(0,LH,0,0), IDWT(0,0,HL,0), IDWT(0,0,0,HH)]
+X_l^{-band} = X_l - R_l^{band}
+```
+
+For each dataset-configured Attribute, the model measures the change caused by
+removing one detail band. Sparsemax
 routing assigns positive counterfactual evidence to the three bands or to a
 no-wavelet route. Attribute spatial maps then fuse the routed residuals into a
 shared selected high-frequency patch tensor `H*_l`.
+
+The three residuals are reconstructed in one batched IDWT call. The former
+implementation that reconstructs three band-removed tensors separately is
+preserved as `model.mlaw_cbm_res.MLAWCBM_res`. The two implementations are
+mathematically equivalent in exact arithmetic and share state-dict keys.
 
 The selected residual has two uses.
 
@@ -83,10 +95,12 @@ this a larger and more explicit ablation, not the main paper model.
 
 | Public role | Stable module | Historical implementation |
 |---|---|---|
-| Main model | `model.mlaw_cbm` | V5-4 |
+| Formal main model | `model.mlaw_cbm` | V5-4 with residual-bank ACFS |
+| Preserved comparison | `model.mlaw_cbm_res` | Direct-IDWT V5-4 |
 | Energy ablation | `model.mlaw_cbm_energy` | V5-7 |
 | Earlier Attribute-wavelet stage | V3 module | V3 |
 | Counterfactual selector stage | newV5 module | newV5 |
 
 The stable modules subclass the audited historical implementations so existing
-V5-4/V5-7 state dictionaries remain compatible.
+V5-4/V5-7 state dictionaries remain compatible. Attribute count is supplied by
+the dataset configuration rather than fixed in the ACFS implementation.

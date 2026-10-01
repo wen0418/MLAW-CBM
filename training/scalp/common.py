@@ -86,7 +86,7 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".bmp"}
 AUDITED_SOURCE_HASHES = {
     "baseline": "29e0d80dd12830cd40d89f64cb9995b3bf5f26196577b44c8fcec9d4200cdc55",
     "isic_v3": "6a2c98eee9f489766f21cfa20748012a965bba7f7d5090ea62f98c111eff9348",
-    "isic_new_v5": "647263b17bbc111c0f85f9794ab03e70ab3b9b5da32c1494d98b4ea2df491786",
+    "isic_new_v5": "74da407f5e7ca3806d83a1df9f16f5e6cdd778b20e61e1951c10f8f52dc713b1",
 }
 
 
@@ -442,6 +442,7 @@ def validate_static_model_contract(spec: VariantSpec) -> dict:
 
 
 def resolved_recipe(spec: VariantSpec) -> dict:
+    num_attributes = len(ATTRIBUTE_PROMPTS)
     recipe = copy.deepcopy(FIXED_RECIPE)
     recipe.update(
         {
@@ -481,7 +482,10 @@ def resolved_recipe(spec: VariantSpec) -> dict:
                 "selector_attribute_prompts": dict(ATTRIBUTE_PROMPTS),
                 "wavelet_transform": "fixed one-level orthonormal 2-D Haar",
                 "wavelet_detail_handling": "LH/HL/HH high-only residual",
-                "attribute_union": "maximum across six spatial-softmax maps",
+                "attribute_union": (
+                    "maximum across "
+                    f"{num_attributes} dataset-configured spatial-softmax maps"
+                ),
                 "frequency_score": "channel-wise normalized high-frequency magnitude",
                 "top_k_axis": "196 patch positions independently for each of 768 channels",
                 "selected_value_source": "original ViT patch values",
@@ -508,11 +512,17 @@ def resolved_recipe(spec: VariantSpec) -> dict:
                 "selector_query_includes_concept_states": False,
                 "wavelet_transform": "fixed one-level orthonormal 2-D Haar",
                 "wavelet_detail_handling": (
-                    "direct-IDWT LH/HL/HH ablation and independent exact "
+                    "one batched IDWT residual bank followed by X minus each "
+                    "isolated LH/HL/HH residual"
+                    if spec.key == "mlaw"
+                    else "direct-IDWT LH/HL/HH ablation and independent exact "
                     "band-only residuals"
                 ),
                 "counterfactual_delta": (
-                    "original attribute similarity minus direct single-band-"
+                    "original attribute similarity minus residual-subtraction "
+                    "counterfactual similarity"
+                    if spec.key == "mlaw"
+                    else "original attribute similarity minus direct single-band-"
                     "removed similarity"
                 ),
                 "counterfactual_routes": ["none", "lh", "hl", "hh"],
@@ -524,7 +534,8 @@ def resolved_recipe(spec: VariantSpec) -> dict:
                     "consumes Sparsemax mass and contributes zero residual"
                 ),
                 "attribute_route_fusion": (
-                    "raw-X spatial-attention weighted mean across six Attributes"
+                    "raw-X spatial-attention weighted mean across "
+                    f"{num_attributes} dataset-configured Attributes"
                 ),
                 "filtered_high_residual": (
                     "H*=g_lh*R_lh+g_hl*R_hl+g_hh*R_hh"
@@ -567,12 +578,12 @@ def resolved_recipe(spec: VariantSpec) -> dict:
                 "concept_pooling_gradient_scale": None,
                 "baseline_adaptive_average_pool_bypassed": False,
                 "concept_visual_shape": (
-                    "batch x 6 attributes x 768 channels"
+                    f"batch x {num_attributes} attributes x 768 channels"
                     if spec.key in {"mlaw", "mlaw_energy"}
                     else None
                 ),
                 "concept_projected_shape": (
-                    "batch x 6 attributes x 512 channels"
+                    f"batch x {num_attributes} attributes x 512 channels"
                     if spec.key in {"mlaw", "mlaw_energy"}
                     else None
                 ),

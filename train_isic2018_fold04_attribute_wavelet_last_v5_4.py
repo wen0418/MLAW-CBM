@@ -35,6 +35,7 @@ from training.common import checkpointing
 from training.common import isic2018 as common_trainer
 import train_isic2018_fold04_attribute_wavelet_last_new_v5 as new_v5_trainer
 from model.mvpcbm_attribute_wavelet_last_new_v5 import (
+    ATTRIBUTE_PROMPTS,
     DEFAULT_ATTRIBUTE_TEMPERATURE,
     DEFAULT_EPS,
     DEFAULT_INITIAL_HIGH_FEATURE_SCALE,
@@ -42,13 +43,11 @@ from model.mvpcbm_attribute_wavelet_last_new_v5 import (
     DEFAULT_ROUTE_TEMPERATURE,
     DEFAULT_TOP_K,
 )
-from model.mvpcbm_attribute_wavelet_last_v5_4 import (
-    mvpcbm as AttributeWaveletLaSTV5_4,
-)
+from model.mlaw_cbm import MLAWCBM as AttributeWaveletLaSTV5_4
 
 
 PROTOCOL = "baseline_cv10_attribute_wavelet_last_v5_4_shared_val_test_diagnostic"
-MODEL_FILENAME = "mvpcbm_attribute_wavelet_last_v5_4.py"
+MODEL_FILENAME = "mlaw_cbm.py"
 PROJECT_ROOT = Path(__file__).resolve().parent
 ORIGIN_ROOT = PROJECT_ROOT
 DEFAULT_MANIFEST_DIR = (
@@ -134,9 +133,10 @@ def model_source_path() -> Path:
 
 def v5_4_recipe(args) -> dict:
     recipe = new_v5_trainer.new_v5_recipe(args)
+    num_attributes = len(ATTRIBUTE_PROMPTS)
     recipe.update(
         {
-            "variant": "refined_mvpcbm_attribute_wavelet_last_v5_4",
+            "variant": "mlaw_cbm_residual_bank",
             "architecture_ablation": (
                 "2x2 ablation cell C: retain the complete new-V5 selector/CLS "
                 "branch, but feed pre-LayerNorm X + alpha*H-star into the "
@@ -171,6 +171,23 @@ def v5_4_recipe(args) -> dict:
             "selector_cls_input": (
                 "unchanged post-LayerNorm W-star = "
                 "LN(X + softplus(s_l) * H-star)"
+            ),
+            "counterfactual_ablation": (
+                "subtract each isolated LH/HL/HH residual from the original "
+                "patch tensor; residuals are reconstructed in one batched IDWT"
+            ),
+            "counterfactual_residual_bank": (
+                "dataset-dynamic batch x 3 bands x patches x hidden dimension"
+            ),
+            "attribute_route_fusion": (
+                "raw-X spatial attention averages positive band-route weights "
+                f"over the dataset-configured {num_attributes} attributes"
+            ),
+            "counterfactual_delta_shape": (
+                f"batch x {num_attributes} attributes x 3 bands x 196 patches"
+            ),
+            "counterfactual_route_shape": (
+                f"batch x {num_attributes} attributes x 4 routes x 196 patches"
             ),
         }
     )
@@ -349,7 +366,7 @@ def run_smoke_test(model, args, fold_frame) -> None:
         json.dumps(
             {
                 "smoke_test": "passed",
-                "model_variant": "refined_mvpcbm_attribute_wavelet_last_v5_4",
+                "model_variant": "mlaw_cbm_residual_bank",
                 "two_by_two_ablation_cell": "C",
                 "batch_size": len(labels),
                 "classification_loss": classification_loss.item(),
@@ -575,7 +592,7 @@ def rewrite_completed_metrics(
     )
     metrics.update(
         {
-            "variant": "refined_mvpcbm_attribute_wavelet_last_v5_4",
+            "variant": "mlaw_cbm_residual_bank",
             "protocol": PROTOCOL,
             "hyperparameters": recipe,
             "model_source": str(variant_source),
@@ -651,8 +668,8 @@ def main():
         "recipe": recipe,
         "training_recipe_difference_vs_origin": recipe_differences,
         "architecture_difference_vs_new_v5": (
-            "concept AP receives pre-LayerNorm X + alpha*H-star instead of X; "
-            "selector/CLS remains unchanged"
+            "counterfactuals use X minus a vectorized isolated-band residual; "
+            "concept AP receives pre-LayerNorm X + alpha*H-star instead of X"
         ),
         "architecture_difference_vs_v5_3": (
             "remove only concept-side LayerNorm; retain identical X + alpha*H-star"

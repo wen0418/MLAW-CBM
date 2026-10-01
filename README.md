@@ -5,9 +5,10 @@ lesion and scalp image analysis.
 
 MLAW-CBM combines multi-layer ViT patch representations, wavelet-enhanced
 patch evidence, Attribute-guided high-frequency CLS aggregation, and an
-interpretable concept bottleneck. The public paper model is the implementation
-historically called **V5-4**. The historical **V5-7** implementation is retained
-as the **MLAW-CBM-Energy** ablation.
+interpretable concept bottleneck. The formal model keeps the V5-4 architecture
+while constructing its counterfactuals from a vectorized residual bank as
+`X - R_band`. The former direct-IDWT implementation is preserved as
+**MLAWCBM_res**, and **V5-7** remains the **MLAW-CBM-Energy** ablation.
 
 > Research status: this repository currently reports controlled diagnostic
 > experiments. The ISIC2018 Fold04 holdout and the scalp test split are reused
@@ -19,8 +20,8 @@ as the **MLAW-CBM-Energy** ablation.
 For every ViT layer, MLAW-CBM:
 
 1. decomposes patch features with a fixed one-level Haar transform;
-2. uses Attribute queries and counterfactual band removal to select useful
-   high-frequency residuals;
+2. reconstructs an LH/HL/HH residual bank and uses Attribute queries to score
+   the counterfactuals `X - R_band`;
 3. aggregates the selected patches into a wavelet-guided CLS representation;
 4. sends the pre-LayerNorm wavelet-enhanced patches through the original
    fixed-bin concept pooling path; and
@@ -38,7 +39,8 @@ the Energy ablation.
 
 ```text
 model/
-  mlaw_cbm.py                  stable public API for MLAW-CBM (historical V5-4)
+  mlaw_cbm.py                  formal residual-bank MLAW-CBM API
+  mlaw_cbm_res.py              preserved direct-IDWT MLAW-CBM
   mlaw_cbm_energy.py           stable public API for the Energy ablation (V5-7)
   mlaw_cbm_configurable.py     dataset-configurable skin/scalp variants
 training/
@@ -93,15 +95,36 @@ dataset/scalp/
 Then run:
 
 ```bash
-bash training/scalp/run_mlaw_cbm.sh --validate-config-only
-bash training/scalp/run_mlaw_cbm.sh
+# Validate paths and configuration without creating output
+bash training/scalp/run_mlaw_cbm.sh \
+  --data-path /path/to/scalp \
+  --validate-config-only
+
+# One-batch forward/backward check
+bash training/scalp/run_mlaw_cbm.sh \
+  --data-path /path/to/scalp \
+  --gpu 0 \
+  --smoke-test
+
+# Train the formal residual-bank MLAW-CBM
+bash training/scalp/run_mlaw_cbm.sh \
+  --data-path /path/to/scalp \
+  --gpu 0
+
 bash training/scalp/run_mlaw_cbm_energy.sh
 ```
 
 See [training/scalp/README.md](training/scalp/README.md) for the six required
-class names and protocol warning. A new researcher who only needs the scalp
-V5-4 model can follow
+class names and protocol warning. A new researcher who only needs the formal
+Scalp model can follow
 [training/scalp/QUICKSTART_V5_4.md](training/scalp/QUICKSTART_V5_4.md).
+
+The public imports are:
+
+```python
+from model.mlaw_cbm import MLAWCBM              # formal X - R_band model
+from model.mlaw_cbm_res import MLAWCBM_res      # preserved direct-IDWT model
+```
 
 ## Diagnostic results
 
