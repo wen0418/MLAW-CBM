@@ -5,6 +5,9 @@ from __future__ import annotations
 from .mvpcbm_attribute_wavelet_last_new_v5_configurable import (
     ConfigurableCounterfactualBandSelectedWaveletLaSTNewV5,
 )
+from .mvpcbm_attribute_wavelet_last_new_v5 import (
+    ResidualSubtractionCounterfactualBandSelectedWaveletAggregator,
+)
 from .mvpcbm_attribute_wavelet_last_v5_4 import (
     PreLayerNormWaveletAdaptivePoolingMixin,
 )
@@ -17,12 +20,27 @@ class ConfigurableMLAWCBM(
 ):
     """MLAW-CBM with dataset-provided ordered Attribute prompts."""
 
+    attribute_wavelet_aggregator_class = (
+        ResidualSubtractionCounterfactualBandSelectedWaveletAggregator
+    )
+
+
+class ConfigurableMLAWCBM_res(
+    PreLayerNormWaveletAdaptivePoolingMixin,
+    ConfigurableCounterfactualBandSelectedWaveletLaSTNewV5,
+):
+    """Preserved direct-IDWT MLAW-CBM for configurable datasets."""
+
 
 class ConfigurableMLAWCBMEnergy(
     OriginalAPWaveletEnergyMixin,
-    ConfigurableMLAWCBM,
+    ConfigurableMLAWCBM_res,
 ):
     """MLAW-CBM-Energy with dataset-provided ordered Attribute prompts."""
 
 
-__all__ = ["ConfigurableMLAWCBM", "ConfigurableMLAWCBMEnergy"]
+__all__ = [
+    "ConfigurableMLAWCBM",
+    "ConfigurableMLAWCBM_res",
+    "ConfigurableMLAWCBMEnergy",
+]

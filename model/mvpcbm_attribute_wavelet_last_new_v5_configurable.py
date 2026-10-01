@@ -24,6 +24,10 @@ class ConfigurableCounterfactualBandSelectedWaveletLaSTNewV5(
 ):
     """new V5 with externally supplied, order-checked Attribute prompts."""
 
+    attribute_wavelet_aggregator_class = (
+        CounterfactualBandSelectedWaveletAggregator
+    )
+
     def __init__(
         self,
         concept_list,
@@ -51,7 +55,7 @@ class ConfigurableCounterfactualBandSelectedWaveletLaSTNewV5(
         )
 
         self.attribute_wavelet_aggregator = (
-            CounterfactualBandSelectedWaveletAggregator(
+            self.attribute_wavelet_aggregator_class(
                 hidden_dim=hidden_dim,
                 attribute_dim=attribute_dim,
                 num_layers=num_layers,
@@ -66,7 +70,12 @@ class ConfigurableCounterfactualBandSelectedWaveletLaSTNewV5(
         )
         self.counterfactual_route_temperature = route_temperature
         self.counterfactual_route_names = ROUTE_NAMES
-        self.counterfactual_ablation = "direct IDWT with one detail band zeroed"
+        self.counterfactual_ablation = (
+            self.attribute_wavelet_aggregator.counterfactual_ablation_description
+        )
+        self.counterfactual_construction = (
+            self.attribute_wavelet_aggregator.counterfactual_construction
+        )
         self.counterfactual_negative_effect = "exclude band from enhancement"
         self.counterfactual_raw_magnitude_used = True
         self.counterfactual_high_residual_injected = True

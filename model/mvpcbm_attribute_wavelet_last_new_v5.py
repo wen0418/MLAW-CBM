@@ -77,6 +77,11 @@ def sparsemax(logits: torch.Tensor, dim: int = -1) -> torch.Tensor:
 class CounterfactualBandSelectedWaveletAggregator(nn.Module):
     """Build a V3 CLS from counterfactually selected wavelet detail bands."""
 
+    counterfactual_construction = "direct_idwt_band_ablation"
+    counterfactual_ablation_description = (
+        "direct IDWT with one detail band zeroed"
+    )
+
     def __init__(
         self,
         hidden_dim: int,
@@ -191,6 +196,21 @@ class CounterfactualBandSelectedWaveletAggregator(nn.Module):
         )
         return torch.stack([self._tokens(item) for item in detail_maps], dim=1)
 
+    def _counterfactual_and_detail_tokens(
+        self,
+        patch_tokens: torch.Tensor,
+        ll: torch.Tensor,
+        lh: torch.Tensor,
+        hl: torch.Tensor,
+        hh: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Return legacy direct-IDWT counterfactuals and detail residuals."""
+
+        return (
+            self._direct_ablation_tokens(ll, lh, hl, hh),
+            self._detail_residual_tokens(ll, lh, hl, hh),
+        )
+
     def forward(
         self,
         patch_tokens: torch.Tensor,
@@ -232,8 +252,9 @@ class CounterfactualBandSelectedWaveletAggregator(nn.Module):
             batch_size, hidden_dim, grid_size, grid_size
         )
         ll, lh, hl, hh = self.dwt(patch_map)
-        ablated_tokens = self._direct_ablation_tokens(ll, lh, hl, hh)
-        detail_tokens = self._detail_residual_tokens(ll, lh, hl, hh)
+        ablated_tokens, detail_tokens = self._counterfactual_and_detail_tokens(
+            patch_tokens, ll, lh, hl, hh
+        )
 
         attribute_queries = F.normalize(
             attribute_embeddings
@@ -288,8 +309,11 @@ class CounterfactualBandSelectedWaveletAggregator(nn.Module):
         high_feature_scale = F.softplus(
             self.raw_high_feature_scales[layer_index]
         )
-        wavelet_patch = self.wavelet_patch_norms[layer_index](
+        enhanced_patch_tokens = (
             patch_tokens + high_feature_scale * filtered_high_tokens
+        )
+        wavelet_patch = self.wavelet_patch_norms[layer_index](
+            enhanced_patch_tokens
         )
 
         # From this point onward, the computation is deliberately V3.
@@ -343,7 +367,9 @@ class CounterfactualBandSelectedWaveletAggregator(nn.Module):
             "hl": hl,
             "hh": hh,
             "ablated_tokens": ablated_tokens,
+            "counterfactual_tokens": ablated_tokens,
             "detail_tokens": detail_tokens,
+            "residual_bank": detail_tokens,
             "attribute_queries": attribute_queries,
             "base_semantic": base_semantic,
             "base_similarity": base_similarity,
@@ -356,8 +382,10 @@ class CounterfactualBandSelectedWaveletAggregator(nn.Module):
             "band_route_weights": band_route_weights,
             "positive_band_routes": positive_band_routes,
             "band_gates": band_gates,
+            "band_gate": band_gates,
             "filtered_high_tokens": filtered_high_tokens,
             "high_feature_scale": high_feature_scale,
+            "x_tilde_pre_norm": enhanced_patch_tokens,
             "wavelet_patch": wavelet_patch,
             "semantic_patches": semantic_patches,
             "attribute_logits": attribute_logits,
@@ -374,8 +402,71 @@ class CounterfactualBandSelectedWaveletAggregator(nn.Module):
         return new_cls, details
 
 
+class ResidualSubtractionCounterfactualBandSelectedWaveletAggregator(
+    CounterfactualBandSelectedWaveletAggregator
+):
+    """Build counterfactuals as X minus a batched isolated-band residual bank."""
+
+    counterfactual_construction = "residual_bank_subtraction"
+    counterfactual_ablation_description = (
+        "original patch tokens minus an isolated LH/HL/HH residual"
+    )
+
+    def _vectorized_detail_residual_tokens(
+        self,
+        ll: torch.Tensor,
+        lh: torch.Tensor,
+        hl: torch.Tensor,
+        hh: torch.Tensor,
+    ) -> torch.Tensor:
+        """Return [B,3,N,D] residuals with one batched inverse-Haar call."""
+
+        batch_size = ll.shape[0]
+        zero = torch.zeros_like(ll)
+        zero_bank = zero.unsqueeze(1).expand(-1, NUM_DETAIL_BANDS, -1, -1, -1)
+        lh_bank = torch.stack((lh, zero, zero), dim=1)
+        hl_bank = torch.stack((zero, hl, zero), dim=1)
+        hh_bank = torch.stack((zero, zero, hh), dim=1)
+
+        def merge_batch_and_band(tensor: torch.Tensor) -> torch.Tensor:
+            return tensor.reshape(
+                batch_size * NUM_DETAIL_BANDS, *tensor.shape[2:]
+            )
+
+        detail_maps = self.idwt(
+            merge_batch_and_band(zero_bank),
+            merge_batch_and_band(lh_bank),
+            merge_batch_and_band(hl_bank),
+            merge_batch_and_band(hh_bank),
+        )
+        detail_maps = detail_maps.reshape(
+            batch_size,
+            NUM_DETAIL_BANDS,
+            *detail_maps.shape[1:],
+        )
+        return detail_maps.flatten(-2).transpose(-1, -2)
+
+    def _counterfactual_and_detail_tokens(
+        self,
+        patch_tokens: torch.Tensor,
+        ll: torch.Tensor,
+        lh: torch.Tensor,
+        hl: torch.Tensor,
+        hh: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        residual_bank = self._vectorized_detail_residual_tokens(
+            ll, lh, hl, hh
+        )
+        counterfactual_tokens = patch_tokens.unsqueeze(1) - residual_bank
+        return counterfactual_tokens, residual_bank
+
+
 class mvpcbm(AttributeWaveletLaSTV3):
     """Refined MVP-CBM with counterfactually selected V3 wavelet enhancement."""
+
+    attribute_wavelet_aggregator_class = (
+        CounterfactualBandSelectedWaveletAggregator
+    )
 
     def __init__(self, concept_list, model_name="openclip", config=None):
         super().__init__(concept_list, model_name=model_name, config=config)
@@ -392,7 +483,7 @@ class mvpcbm(AttributeWaveletLaSTV3):
         )
 
         self.attribute_wavelet_aggregator = (
-            CounterfactualBandSelectedWaveletAggregator(
+            self.attribute_wavelet_aggregator_class(
                 hidden_dim=hidden_dim,
                 attribute_dim=attribute_dim,
                 num_layers=num_layers,
@@ -407,11 +498,15 @@ class mvpcbm(AttributeWaveletLaSTV3):
         )
         self.counterfactual_route_temperature = route_temperature
         self.counterfactual_route_names = ROUTE_NAMES
-        self.counterfactual_ablation = "direct IDWT with one detail band zeroed"
+        self.counterfactual_ablation = (
+            self.attribute_wavelet_aggregator.counterfactual_ablation_description
+        )
+        self.counterfactual_construction = (
+            self.attribute_wavelet_aggregator.counterfactual_construction
+        )
         self.counterfactual_negative_effect = "exclude band from enhancement"
         self.counterfactual_raw_magnitude_used = True
         self.counterfactual_high_residual_injected = True
         self.counterfactual_ll_conv_gate_used = False
         self.attribute_selector_uses_concept_states = False
         self.attribute_wavelet_old_cls_used = False
-
